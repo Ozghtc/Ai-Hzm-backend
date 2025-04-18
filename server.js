@@ -4,36 +4,43 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const { Configuration, OpenAIApi } = require('openai');
 
+// Ortam değişkenlerini al (.env içinden veya Render'dan)
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(bodyParser.json());
 
+// OpenAI API ayarları
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
+// API route
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
 
   try {
-    const response = await openai.createChatCompletion({
+    const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: message }],
     });
 
-    const reply = response.data.choices[0].message.content;
-    res.json({ reply });
+    res.json({ reply: completion.data.choices[0].message.content });
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'OpenAI API error' });
+    console.error('OpenAI Error:', error.message);
+    res.status(500).json({ error: 'OpenAI yanıt veremedi' });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.get('/', (req, res) => {
+  res.send('AI HZM Backend Aktif!');
 });
-// server.js - placeholder
+
+app.listen(port, () => {
+  console.log(`Server çalışıyor http://localhost:${port}`);
+});
+
