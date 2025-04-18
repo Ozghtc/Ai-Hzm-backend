@@ -2,9 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
+
+// ✅ OpenAI kütüphanesi doğru şekilde import ediliyor
 const { Configuration, OpenAIApi } = require('openai');
 
-// Ortam değişkenlerini al (.env içinden veya Render'dan)
+// .env dosyasını yükle
 dotenv.config();
 
 const app = express();
@@ -13,13 +15,13 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// OpenAI API ayarları
+// ✅ OpenAI API ayarları
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-// API route
+// ✅ POST /chat endpoint'i
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
 
@@ -36,10 +38,12 @@ app.post('/chat', async (req, res) => {
   }
 });
 
+// ✅ GET / endpoint'i
 app.get('/', (req, res) => {
   res.send('AI HZM Backend Aktif!');
 });
 
+// ✅ Sunucu başlat
 app.listen(port, () => {
   console.log(`Server çalışıyor http://localhost:${port}`);
 });
